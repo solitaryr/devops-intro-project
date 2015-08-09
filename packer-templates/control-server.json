@@ -4,8 +4,8 @@
       "PACKER_BOX_NAME": "ubuntu-14.04.3-server-amd64",
       "AWS_ACCESS_KEY_ID": "{{env `AWS_ACCESS_KEY_ID`}}",
       "AWS_SECRET_ACCESS_KEY": "{{env `AWS_SECRET_ACCESS_KEY`}}"
-  },
-  "builders": [
+    },
+    "builders": [
       {
         "type": "virtualbox-iso",
         "boot_command": [
@@ -62,7 +62,7 @@
         "source_ami": "ami-10b68a78",
         "instance_type": "t1.micro",
         "ssh_username": "ubuntu",
-        "ami_name": "control-{{ user `PACKER_BOX_NAME` }}-{{timestamp}}"
+        "ami_name": "packer-control-server-{{timestamp}}"
       },
       {
         "type": "googlecompute",
@@ -75,10 +75,11 @@
         "ssh_username": "ubuntu"
       }
   ],
+
   "provisioners": [
     {
       "type": "shell",
-      "execute_command": "echo 'vagrant'|sudo -S -E bash '{{.Path}}'",
+      "execute_command": "echo 'vagrant'|{{.Vars}} sudo -S -E bash '{{.Path}}'",
       "scripts": [
         "scripts/update.sh"
       ]
@@ -88,14 +89,9 @@
     "only": ["virtualbox-iso"],
     "execute_command": "echo 'vagrant'|sudo -S -E bash '{{.Path}}'",
     "scripts": [
-    "scripts/virtualbox.sh",
-    "scripts/vagrant.sh"
-    ]
-    },
-    {
-      "type": "file",
-      "source": "../jenkins-config",
-      "destination": "/tmp"
+        "scripts/virtualbox.sh",
+        "scripts/vagrant.sh"
+      ]
     },
     {
       "type": "shell",
@@ -114,7 +110,7 @@
         "type": "vagrant",
         "except": ["googlecompute"],
         "compression_level": "9",
-        "output": "../output/{{.Provider}}/control-{{ user `PACKER_BOX_NAME` }}.box"
+        "output": "{{.Provider}}/{{ user `PACKER_BOX_NAME` }}-control_{{.Provider}}.box"
       }
     ]
   ]
