@@ -79,7 +79,7 @@
   "provisioners": [
     {
       "type": "shell",
-      "execute_command": "echo 'vagrant'|{{.Vars}} sudo -S -E bash '{{.Path}}'",
+      "execute_command": "echo 'vagrant'| sudo -S -E bash '{{.Path}}'",
       "scripts": [
         "scripts/update.sh"
       ]
